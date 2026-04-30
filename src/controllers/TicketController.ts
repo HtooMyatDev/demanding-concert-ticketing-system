@@ -6,15 +6,15 @@ import { Concert } from "../entity/Concert.js";
 export default class TicketController {
     static async getAll(req: Request, res: Response) {
         const tickets = await AppDataSource.getRepository(Ticket).find();
-        
+
         // Format the dates to Thailand time (Asia/Bangkok)
         const formattedTickets = tickets.map(ticket => ({
             ...ticket,
-            reservedUntil: ticket.reservedUntil 
-                ? ticket.reservedUntil.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' }) 
+            reservedUntil: ticket.reservedUntil
+                ? ticket.reservedUntil.toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })
                 : null
         }));
-        
+
         res.json(formattedTickets);
     }
 
@@ -33,7 +33,7 @@ export default class TicketController {
     }
 
     static async reserve(req: Request, res: Response) {
-        const { concertId, userId } = req.body;
+        const { concertId, userId, category} = req.body;
 
         const queryRunner = AppDataSource.createQueryRunner();
         await queryRunner.connect();
@@ -55,6 +55,7 @@ export default class TicketController {
 
             ticket.status = "reserved";
             ticket.userId = userId;
+            ticket.category = category;
             ticket.reservedUntil = expiry;
 
             await queryRunner.manager.decrement(Concert, { id: concertId }, "availableStock", 1);

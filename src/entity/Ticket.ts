@@ -9,7 +9,7 @@ import {
 export type TicketStatus = "sold" | "reserved" | "available";
 
 @Entity()
-// B-Tree index on concertId for fast concert-based lookups
+
 @Index("IDX_TICKET_CONCERT", ["concertId"])
 export class Ticket {
     @PrimaryGeneratedColumn()
@@ -29,14 +29,11 @@ export class Ticket {
     reservedUntil!: Date | null;
 
     @Column({ type: "int", nullable: true })
-    userId!: number; // The user trying to buy it
+    userId!: number;
 
     @Column({ type: "varchar", nullable: true })
     category!: string;
-    // OPTIMISTIC LOCKING:
-    // This is a special column that TypeORM uses to prevent "Lost Updates".
-    // Every time the row is saved, this number increases. If two processes
-    // try to save the same row, the second one will fail.
+
     @VersionColumn()
     version!: number;
 }

@@ -21,14 +21,14 @@ async function seed() {
         name: "Symphony Orchestra",
         venue: "Grand Hall",
         date: "2026-06-15T20:00:00Z",
-        availableStock: 1
+        availableStock: 20
     });
 
     const concert2 = concertRepo.create({
         name: "Rock Festival",
         venue: "Outdoor Arena",
         date: "2026-07-20T18:00:00Z",
-        availableStock: 1
+        availableStock: 5
     });
 
     await concertRepo.save([concert1, concert2]);
