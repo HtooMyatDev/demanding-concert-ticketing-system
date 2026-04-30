@@ -117,3 +117,61 @@ I implemented **Optimistic Locking** using a `@VersionColumn()` on the `Ticket` 
 I used <b>Vibe Coding (AI)</b> to understand the fundamentals of partial indexing and optimistic locking. Initially, I wasn't sure how to design the project structure, so I intended to use built-in agent to create it. However, I later realized that it would be better to create it myself to fully understand the project.
 
 Additionally, I asked AI to create a seeder for me to test the system with a large number of tickets. Instead of following the AI's suggestion blindly, I followed a <b>HCAI (Human Centered Artifical Intelligence)</b> principle by examining and understanding the code it generated before using it. After that, I optimized the code to make it more efficient and maintainable. This is how I "Vibe Code" with AI.
+
+# Day 3 Assignment: Hardening the "Ticket" System
+
+Objective
+- [x] Transform the basic Express API into a resilient, observable, and secure service
+capable of surviving a high-traffic "Ticket Drop" event.
+
+## Part 1: Observability & Tracing
+1. [x] <b>Correlation IDs:</b> Implement a middleware that checks for an `X-Correlation-ID` header. If it doesn't exist, generate a UUID.
+2. [x] <b>Contextual Logging:</b> Use `AsyncLocalStorage` to ensure that every log (using <b>Pino</b> or <b>Winston</b>) automatically includes this Correlation ID without passing it through service functions.
+
+3. [x] <b>Global Error Mapper:</b> Remove all `try/catch` blocks from your controllers that return manual error messages. Replace them with a <b>Global Error Middleware</b> that:
+    - Logs the full stack trace and Correlation ID to the console/file.
+    - Returns a clean JSON response: ` { "error": "CODE",
+    "message": "User friendly message",
+    "ref": "[Correlation-ID]" }.`
+## Part 2: Request Safety (The Front Gate)
+1. [x] <b>Validation</b>: Create <b>Zod</b> (or Class-Validator) schemas for the `POST /reserve` and `POST /tickets` endpoints.
+    - Reject requests with unknown properties.
+    - Ensure `quantity` is an integer between 1 and 5.
+
+2. [x] <b>Response DTOs</b>: Implement a serialization layer. Ensure the `GET /tickets` endpoint <b>never</b> returns the database `internal note` or the `version` column.
+
+3. [x] <b>Rate Limiting</b>: Setup `express-rate-limit` backed by <b>Redis</b>.
+    - Limit the `/reserve` endpoint to 5 requests per minute per IP.
+
+## Part 3: Concurrency & Data Integrity
+1. [x] <b>The Race Condition Challenge:</b> Implement the ticket purchase logic using <b>two different methods</b> (create two separate endpoints for testing):
+    - <b>Method A (Optimistic):</b> Use TypeORM `@VersionColumn`. Handle the error
+when two users hit the same version.
+    - <b>Method B (Pessimistic):</b> Use `queryRunner.manager setLock` with `pessimistic write` to lock the ticket row during the transaction.
+
+2. [x] <b>Atomic Updates:</b> Refactor the "Decrease Stock" logic to use a single SQL `UPDATE` statement with a `WHERE stock > 0` clause instead of fetching, calculating in JS, and saving (use query builder from ORM)
+
+## Part 4: Documentation & Operations
+1. [x] <b>Auto-Swagger:</b> Integrate `swagger-ui-express`. Use decorators on your Day 3 endpoints to define:
+    - The expected Request Body.
+    - The 200 Success DTO.
+    - The 409 Conflict (Locking) error response.
+
+2. [x] <b>Graceful Shutdown:</b> Add a listener for `SIGTERM`. Ensure that if you stop the server, it waits at least 5 seconds for pending DB queries to finish before exiting the process.
+
+## Submission Requirements
+- <b>A "Stress Test" Report</b>:
+  - **Optimistic Locking (Method A)**: During simultaneous reservation attempts for the last ticket, the first request succeeded while the second failed with an `OptimisticLockVersionMismatchError` (409 Conflict). This proves the `@VersionColumn` correctly detected the concurrent update and prevented double-booking.
+  - **Atomic Updates (Method B)**: Using a single SQL `UPDATE` with an `availableStock >= quantity` check ensured that only one transaction could decrement the stock for the final ticket. The second request failed the `WHERE` clause and returned a `TICKETS_EXHAUSTED` error (400), confirming that atomic database operations successfully maintain data integrity without row-level locks.
+- <b>Swagger UI</b>: ![alt text](<Screenshot 2569-05-06 at 15.30.59.png>)
+- <b>Logs</b>: 
+```json
+// 1. Success Request with Correlation ID
+{"level":30,"time":1778057983768,"correlationId":"affdd84d-f60f-4788-a046-a403fe6a517e","method":"POST","url":"/api/tickets/reserve","msg":"Request Received"}
+
+// 2. Handled "Sold Out" (Logged as WARN to reduce noise)
+{"level":40,"time":1778057983819,"correlationId":"05f4f86b-fb96-40e7-abae-0dc8959397ae","err":{"type":"Error","message":"TICKETS_EXHAUSTED"},"url":"/api/tickets/reserve","msg":"Client-side or Logic Error"}
+
+// 3. Handled "Database Busy" (Mapped to 503 Service Unavailable)
+{"level":50,"time":1778057983818,"correlationId":"affdd84d-f60f-4788-a046-a403fe6a517e","err":{"type":"QueryFailedError","message":"SqliteError: cannot start a transaction within a transaction"},"url":"/api/tickets/reserve","msg":"Global Error Caught"}
+```

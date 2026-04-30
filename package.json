@@ -8,7 +8,7 @@
         "start": "node dist/index.js",
         "dev": "tsx --watch src/index.ts",
         "typeorm": "typeorm-ts-node-esm",
-        "migration:generate": "npm run typeorm -- migration:generate src/migrations/AddCategoryToTicket -d src/data-source.ts",
+        "migration:generate": "npm run typeorm -- migration:generate src/migrations/AddReservationIdToTicket -d src/data-source.ts",
         "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
         "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts"
     },
@@ -17,16 +17,30 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
+        "async_hooks": "^1.0.0",
         "better-sqlite3": "^12.9.0",
+        "dotenv": "^16.6.1",
         "express": "^5.2.1",
+        "express-rate-limit": "^8.4.1",
+        "nanoid": "^5.1.11",
         "node-cron": "^4.2.1",
+        "pino": "^10.3.1",
+        "rate-limit-redis": "^4.3.1",
+        "redis": "^5.12.1",
+        "redis-cli": "^2.1.2",
         "reflect-metadata": "^0.2.2",
         "sqlite3": "^5.1.7",
-        "typeorm": "^0.3.28"
+        "swagger-jsdoc": "^6.2.8",
+        "swagger-ui-express": "^5.0.1",
+        "typeorm": "^0.3.28",
+        "uuid": "^14.0.0",
+        "zod": "^4.4.2"
     },
     "devDependencies": {
         "@types/express": "^5.0.6",
         "@types/node": "^25.6.0",
+        "@types/swagger-jsdoc": "^6.0.4",
+        "@types/swagger-ui-express": "^4.1.8",
         "ts-node": "^10.9.2",
         "tsx": "^4.21.0",
         "typescript": "^6.0.3"

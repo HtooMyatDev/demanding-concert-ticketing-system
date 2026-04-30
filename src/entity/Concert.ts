@@ -18,6 +18,6 @@ export class Concert {
     @Column({ type: "int", default: 0 })
     availableStock!: number;
 
-    @OneToMany(() => Ticket, (ticket) => ticket.concertId)
+    @OneToMany(() => Ticket, (ticket) => ticket.concert)
     tickets!: Relation<Ticket>[];
 }

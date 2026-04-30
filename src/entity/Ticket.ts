@@ -4,7 +4,10 @@ import {
     Column,
     Index,
     VersionColumn,
+    ManyToOne,
+    type Relation,
 } from "typeorm";
+import { Concert } from "./Concert.js";
 
 export type TicketStatus = "sold" | "reserved" | "available";
 
@@ -17,6 +20,12 @@ export class Ticket {
 
     @Column({ type: "int" })
     concertId!: number;
+
+    @ManyToOne(() => Concert, (concert) => concert.tickets)
+    concert!: Relation<Concert>;
+
+    @Column({ type: "varchar", nullable: true })
+    reservationId!: string | null;
 
     @Column({ type: "varchar" })
     seatNumber!: string;
