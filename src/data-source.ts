@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
     synchronize: false,
     logging: false, // Reduced logging for stress testing
     entities: [Concert, Ticket],
-    migrations: ["src/migrations/*.ts"],
+    migrations: ["dist/migrations/*.js"],
     prepareDatabase: (db: any) => {
         db.pragma('journal_mode = WAL');
         db.pragma('synchronous = NORMAL');
