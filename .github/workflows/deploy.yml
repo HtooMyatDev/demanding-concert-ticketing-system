@@ -23,6 +23,6 @@ jobs:
             fi
             cd ~/concert-ticketing-system
             git pull origin master
-            touch .env
+            echo "REDIS_URL=${{ secrets.REDIS_URL }}" > .env
             
             docker compose up -d --build
