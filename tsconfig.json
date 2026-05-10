@@ -3,8 +3,8 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
