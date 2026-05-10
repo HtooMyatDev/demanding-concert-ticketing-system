@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./ticketing.db:/app/ticketing.db
+      - ./ticketing.db-shm:/app/ticketing.db-shm
+      - ./ticketing.db-wal:/app/ticketing.db-wal
+    env_file:
+      - .env
+    restart: always

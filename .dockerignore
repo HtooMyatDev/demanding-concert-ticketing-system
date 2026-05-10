@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.github
+.vscode
+*.db
+*.db-shm
+*.db-wal
+README.md
+scripts
+Dockerfile
+docker-compose.yml
+.env
