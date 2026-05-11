@@ -38,8 +38,8 @@ app.use(express.json());
 app.use(correlationMiddleware);
 app.use(requestLogger);
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use('/api', rootRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api/v1', rootRouter);
 
 app.use(globalErrorMapper);
 
