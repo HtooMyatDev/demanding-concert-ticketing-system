@@ -13,4 +13,12 @@ rootRouter.get("/debug-sentry", (req, res) => {
     throw new ConcurrencyError("Manual Trigger: Concurrency conflict detected!");
 });
 
+rootRouter.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Concert Ticketing API v1 is operational",
+        documentation: "/docs"
+    });
+});
+
 export default rootRouter;
