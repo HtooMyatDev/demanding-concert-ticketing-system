@@ -1,6 +1,8 @@
+import "./instrument.js";
 import "dotenv/config";
 import "reflect-metadata";
 import express from "express";
+import * as Sentry from "@sentry/node";
 import cron from "node-cron";
 import { correlationMiddleware } from "./middleware/correlation.middleware.js";
 import { requestLogger } from "./middleware/request.logger.js";
@@ -20,6 +22,13 @@ import swaggerJsdoc from "swagger-jsdoc";
 
 const app = express();
 const PORT = 3001;
+
+// Trust Nginx proxy headers
+app.set('trust proxy', true);
+
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+});
 
 const swaggerOptions = options;
 const swaggerSpec = swaggerJsdoc(swaggerOptions);

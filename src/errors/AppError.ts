@@ -28,5 +28,10 @@ export class NotFoundError extends AppError {
     constructor(msg = "Not found") {
         super(msg, 404, "NOT_FOUND");
     }
+}
 
+export class ConcurrencyError extends AppError {
+    constructor(msg = "Concurrency conflict: Another reservation is in progress") {
+        super(msg, 503, "CONCURRENCY_ERROR");
+    }
 }

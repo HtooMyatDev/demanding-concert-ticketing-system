@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/AppError.js";
 import storage from "../utils/context.js";
@@ -36,6 +37,15 @@ export function globalErrorMapper(err: any, req: Request, res: Response, next: N
         statusCode = 503;
         errorCode = "DATABASE_BUSY";
         message = "The server is currently busy handling other reservations. Please try again in a few seconds.";
+    }
+
+    // Report to Sentry
+    if (statusCode >= 500 || errorCode === "CONCURRENCY_ERROR" || err.name === "OptimisticLockVersionMismatchError") {
+        Sentry.withScope((scope) => {
+            scope.setTag("correlation_id", correlationId);
+            scope.setTag("error_code", errorCode);
+            Sentry.captureException(err);
+        });
     }
 
     // Log 5xx errors as ERROR, and 4xx as WARN to reduce noise
