@@ -17,6 +17,8 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
+        "@sentry/node": "^10.52.0",
+        "@sentry/profiling-node": "^10.52.0",
         "async_hooks": "^1.0.0",
         "better-sqlite3": "^12.9.0",
         "dotenv": "^16.6.1",
@@ -39,6 +41,7 @@
     "devDependencies": {
         "@types/express": "^5.0.6",
         "@types/node": "^25.6.0",
+        "@types/node-cron": "^3.0.11",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
         "ts-node": "^10.9.2",
