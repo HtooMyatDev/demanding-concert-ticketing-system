@@ -15,29 +15,19 @@ rootRouter.get("/debug-sentry", (req, res) => {
 
 rootRouter.get("/", (req, res) => {
     res.json({
-        "name": "High-Demand Ticket Reservation Backend",
-        "status": "ok",
+        "name": "Concert Ticketing API",
+        "version": "v1",
+        "status": "operational",
         "endpoints": {
-            "health": "GET /health",
-            "healthV1": "GET /api/v1/health",
-            "concerts": "GET /concerts",
-            "concertsV1": "GET /api/v1/concerts",
-            "tickets": "GET /tickets",
-            "ticketsV1": "GET /api/v1/tickets",
-            "reserve": "POST /reserve",
-            "reserveV1": "POST /api/v1/reserve",
-            "createTicket": "POST /tickets",
-            "createTicketV1": "POST /api/v1/tickets",
-            "purchase": "POST /purchase",
-            "purchaseV1": "POST /api/v1/purchase",
-            "purchaseOptimistic": "POST /tickets/:ticketId/purchase-optimistic",
-            "purchaseOptimisticV1": "POST /api/v1/tickets/:ticketId/purchase-optimistic",
-            "purchasePessimistic": "POST /tickets/:ticketId/purchase-pessimistic",
-            "purchasePessimisticV1": "POST /api/v1/tickets/:ticketId/purchase-pessimistic",
-            "cleanup": "POST /cleanup",
-            "cleanupV1": "POST /api/v1/cleanup",
-            "docs": "GET /api-docs",
-            "docsV1": "GET /api/v1/docs"
+            "concerts": "GET /api/v1/concerts",
+            "tickets": "GET /api/v1/tickets",
+            "reserve": "POST /api/v1/tickets/reserve",
+            "reserveOptimistic": "POST /api/v1/tickets/reserve/optimistic",
+            "reservePessimistic": "POST /api/v1/tickets/reserve/pessimistic",
+            "purchase": "POST /api/v1/tickets/purchase",
+            "cleanup": "POST /api/v1/tickets/cleanup",
+            "debugSentry": "GET /api/v1/debug-sentry",
+            "docs": "GET /docs"
         }
     });
 });
