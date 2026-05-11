@@ -24,5 +24,6 @@ jobs:
             cd ~/concert-ticketing-system
             git pull origin master
             echo "REDIS_URL=${{ secrets.REDIS_URL }}" > .env
+            echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
             
             docker compose up -d --build
